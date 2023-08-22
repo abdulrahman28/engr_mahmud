@@ -1,16 +1,16 @@
-
 #include <WiFi.h>
 #include <HTTPClient.h>
-
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BME280.h>
+#include <Abdulrahman_esp.h>
 
 const char* ssid = "CLC";
 const char* password = "55558888";
 
 //Your Domain name with URL path or IP address with path
 const char* serverName = "http://example.com/esp-post-data.php";
+
+int timedelay = 5000;
+
+unsigned long cms, pms = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -24,20 +24,12 @@ void setup() {
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
-
-  // (you can also pass in a Wire library object like &Wire2)
-  bool status = bme.begin(0x76);
-  if (!status) {
-    Serial.println("Could not find a valid BME280 sensor, check wiring or change I2C address!");
-    while (1);
-  }
   
-  Serial.println("Timer set to 30 seconds (timerDelay variable), it will take 30 seconds before publishing the first reading.");
 }
 
 void loop() {
   //Send an HTTP POST request every 10 minutes
-  if ((millis() - lastTime) > timerDelay) {
+  if ((millis() - pms) > timerDelay) {
     //Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
       WiFiClient client;
